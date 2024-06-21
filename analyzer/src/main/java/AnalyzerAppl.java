@@ -1,4 +1,4 @@
-package telran.analyzer;
+package telran.request;
 
 import java.util.function.Consumer;
 

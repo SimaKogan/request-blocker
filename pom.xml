@@ -8,8 +8,8 @@
 		<version>3.3.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>telran.exm</groupId>
-	<artifactId>analyzer</artifactId>
+	<groupId>telran.request</groupId>
+	<artifactId>request-blocker</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>analyzer</name>
 	<description>microservices</description>
@@ -87,7 +87,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		<groupId>telran.analyzer.api</groupId>
+		<groupId>telran.request.api</groupId>
   <artifactId>request-blocker-api</artifactId>
   <version>0.0.1</version>
 		</dependency>
@@ -122,6 +122,6 @@
 	</build>
 
 	<modules>
-	<module>analyzer-microservice</module>
+	<module>analyzer</module>
 	</modules>
 </project>
