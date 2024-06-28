@@ -2,8 +2,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>telran.request</groupId>
-    <artifactId>analyzer</artifactId>
+    <artifactId>request-blocker</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>request-blocker</artifactId>
+  <artifactId>analyzer</artifactId>
 </project>
