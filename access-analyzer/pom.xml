@@ -7,13 +7,15 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
     <artifactId>request-blocker</artifactId>
     <version>0.0.1</version>
   </parent>
-  <artifactId>failed-sender</artifactId>
-  <name>failed-sender</name>
-  <description>imitation of auth-faild sender</description>
   <dependencies>
-	<dependency>
+  	<dependency>
+  		<groupId>org.springframework.boot</groupId>
+  		<artifactId>spring-boot-starter-data-redis</artifactId>
+  	</dependency>
+  	<dependency>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-stream-binder-kafka</artifactId>
 	</dependency>
   </dependencies>
+  <artifactId>access-analyzer</artifactId>
 </project>

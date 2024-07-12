@@ -24,19 +24,19 @@ class SenderTest {
 	SenderConfiguration senderConfiguration;
 	
 	@Test
-	void test() throws Excrption {
+	void test() throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		String bindingName = senderConfiguration.getBindingName();
 		long timestamp = System.currentTimeMillis();
-		while (System.currentTimeMillis() - timestamp < SenderAppl.TIMEOUT / 10) {
+		while (System.currentTimeMillis() - timestamp < SenserAppl.TIMEOUT / 10) {
 			Message<byte[]> message = consumer.receive(1000, bindingName);
 			if (message != null) {
 				IpData IpData = mapper.readValue(message.getPayload(), IpData.class);
-				log.debug("test: {}", IpData);
+				log.trace("test: {}", IpData);
 			}
 			Thread.sleep(1000);
 			
+		  }
 		}
-	}
-	
+
 }

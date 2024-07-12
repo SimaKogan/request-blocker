@@ -86,6 +86,7 @@
 
 	<modules>
 	<module>failed-sender</module>
-	<module>analyzer</module>
+	<module>access-analyzer</module>
+	<module>redis-explorer</module>
 	</modules>
 </project>

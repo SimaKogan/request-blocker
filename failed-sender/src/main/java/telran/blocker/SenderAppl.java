@@ -21,7 +21,7 @@ import telran.blocker.service.SenderService;
 @RequiredArgsConstructor
 @EnableScheduling
 public class SenderAppl {
-	public static final long TIMEOUT = 85000;
+	public static final long TIMEOUT = 110000;
 	final SenderService senderService;
 	final StreamBridge streamBridge;
 	final SenderConfiguration senderConfiguration;
@@ -32,31 +32,6 @@ public class SenderAppl {
 		ctx.close();
 	}
 	
-	@Scheduled(fixedDelayString = "${app.sender.fixed-delay:90000}")
-	void roundMap() {
-		HashMap<String, Integer> IPsMap = senderConfiguration.getPsMap();
-		IPsMap.forEach((key, value) -> {
-			getRandomipData(key, value);
-			goSleep(value);
-		});
-	}
-	
-	void getRandomipData(String IP, int quality) {
-		IntStream.range(0, quantity).forEach(q -> {
-			String WSN = senderService.getRandomWEB_ServiceName();
-			IpData ipData = senderService.getRandomIpData(IP, WSN);
-			log.debug("ipData: {}", ipData);
-			sendIpData(ipData);
-			goSleep(1);
-		});
-	}
-	
-	void sendIpData(IpData ipData) {
-		String bindingName = senderConfiguration.getBindingName();
-		streamBridge.send(bindingName, ipData);
-		log.debug("ipData: {}, bindingName {}", ipData, bindingName):
-	}
-	
 	private void goSleep(int msec) {
 		try {
 			Thread.sleep(msec * 1000);
@@ -64,4 +39,32 @@ public class SenderAppl {
 			Thread.currentThread().interrupt();
 			}
 	}
+	
+	@Scheduled(fixedDelayString = "${app.sender.fixed-delay:120000}")
+	void roundMap() {
+		HashMap<String, Integer> IPsMap = senderConfiguration.getIPsMap();
+		IPsMap.forEach((key, value);
+		goSleep(value);
+	});
+
+}
+
+void getRandomIpData(String IP, int quantity) {
+	IntStream.range(0, quantity).forEach(q -> {
+		String WSN = senderService.getRandomWeb_ServiceName();
+		IpData ipData = senderService.getRandomIpData(IP, WSN);
+		log.debug("ipData: {}", ipData);
+		sendIpData(ipData);
+		goSleep(1);
+	});
+}
+
+void sendIpData(IpData ipData) {
+	String bindingName = senderConfiguration.getBindingName();
+	streamBridge.send(bindingName, ipData);
+	log.debug("ipData: {}, bindingName {}", ipData, bindingName);
+}
+
+
+
 }
