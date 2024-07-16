@@ -43,7 +43,8 @@ public class SenderAppl {
 	@Scheduled(fixedDelayString = "${app.sender.fixed-delay:120000}")
 	void roundMap() {
 		HashMap<String, Integer> IPsMap = senderConfiguration.getIPsMap();
-		IPsMap.forEach((key, value);
+		IPsMap.forEach((key, value) -> {
+		getRandomIpData (key, value);
 		goSleep(value);
 	});
 

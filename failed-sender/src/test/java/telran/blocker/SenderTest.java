@@ -28,7 +28,7 @@ class SenderTest {
 		ObjectMapper mapper = new ObjectMapper();
 		String bindingName = senderConfiguration.getBindingName();
 		long timestamp = System.currentTimeMillis();
-		while (System.currentTimeMillis() - timestamp < SenserAppl.TIMEOUT / 10) {
+		while (System.currentTimeMillis() - timestamp < SenderAppl.TIMEOUT / 10) {
 			Message<byte[]> message = consumer.receive(1000, bindingName);
 			if (message != null) {
 				IpData IpData = mapper.readValue(message.getPayload(), IpData.class);

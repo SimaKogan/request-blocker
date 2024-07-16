@@ -14,7 +14,7 @@ public class SenderConfiguration {
 	String bindingName;
 	
 @SuppressWarnings("serial")
-    HashMap<String, Integer> IPsMap = new HashMap<>{
+    HashMap<String, Integer> IPsMap = new HashMap<>(){
 	{
 		put("151.151.151.151", 1);
 		put("152.152.152.152", 2);

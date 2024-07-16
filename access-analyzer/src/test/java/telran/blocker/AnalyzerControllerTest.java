@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import telran.blocker.dto.IpData;
 import telran.blocker.service.AnalyzerService;
 
-@TestMethodOrder(MethodOrder.OrderAnnotation.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 @Slf4j
 @Import(TestChannelBinderConfiguration.class)
@@ -40,21 +40,21 @@ class AnalyzerControllerTest {
 	@MockBean
 	AnalyzerService analyzerService;
 	@Value("${app.analyzer.bing.name:analyzerData-out-0}")
-	String producerBindihgName;
+	String producerBindingName;
 	String consumerBindingName = "consumerAnalyzer-in-0";
 	
 	
 	
-	static final telran.blocker.dto.IpData IpData NO_BLOCK_IP_DATA = new IpData("100.100.100.100", "WEBname1", 1000);
+	static final IpData NO_BLOCK_IP_DATA = new IpData("100.100.100.100", "WEBname1", 1000);
 	static final IpData BLOCK_IP_DATA = new IpData("200.200.200.200", "name", 0);
 	static final String ipBlocked = "200.200.200.200";
 	static final IpData IP_DATA_WITH_BLOCKED_IP = new IpData(ipBlocked, "name", 0);
 	
 	@BeforeEach
 	void setUp() {
-		When(analyzerService.getList(BLOCK_IP_DATA))
+		when(analyzerService.getList(BLOCK_IP_DATA))
 		.thenReturn(List.of(BLOCK_IP_DATA, BLOCK_IP_DATA, BLOCK_IP_DATA, BLOCK_IP_DATA, BLOCK_IP_DATA));
-		when(analyzerService.getList(NO_BLOCK_IPDATA)).thenReturn(null);
+		when(analyzerService.getList(NO_BLOCK_IP_DATA)).thenReturn(null);
 	}
 
 	
@@ -74,7 +74,7 @@ class AnalyzerControllerTest {
 	@Order(2)
 	void testIpBlocked() throws Exception {
 		producer.send(new GenericMessage<IpData>(BLOCK_IP_DATA), consumerBindingName);
-		Message<byte[]> message = consumer.receive(10, prodicerBindingName);
+		Message<byte[]> message = consumer.receive(10, producerBindingName);
 		assertNotNull(message);
 		ObjectMapper mapper = new ObjectMapper();
 		IpData actual = mapper.readValue(message.getPayload(), IpData.class);

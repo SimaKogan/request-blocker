@@ -26,7 +26,7 @@ public class RedisModel {
 	}
 	@Override
 	public int hashCode() {
-		return Object.hash(IP);
+		return Objects.hash(IP);
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -37,8 +37,9 @@ public class RedisModel {
 		if (getClass() != obj.getClass())
 			return false;
 		RedisModel other = (RedisModel) obj;
-		return Object.equals(IP, other.IP);
+		return Objects.equals(IP, other.IP);
 	}
+	
 
 
 	

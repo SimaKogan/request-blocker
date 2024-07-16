@@ -18,10 +18,10 @@ import telran.blocker.dto.WebServiceTimestamp;
 @AllArgsConstructor
 public class RedisModel {
 	@Id
-	String Ip;
+	String IP;
 	List<WebServiceTimestamp> webServicesTimestamps;
 	public  RedisModel(String IP) {
-		this.Ip = IP;
+		this.IP = IP;
 		webServicesTimestamps = new ArrayList<>();
 	}
 	@Override
@@ -37,7 +37,7 @@ public boolean equals(Object obj) {
 	if (getClass() != obj.getClass())
 		return false;
 	RedisModel other = (RedisModel) obj;
-	return Objects.equals(IP, other.Ip);
+	return Objects.equals(IP, other.IP);
   }
 
 
