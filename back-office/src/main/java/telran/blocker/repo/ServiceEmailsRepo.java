@@ -2,8 +2,8 @@ package telran.blocker.repo;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import telran.blocker.model.IpDataDoc;
+import telran.blocker.model.ServiceEmailsDoc;
 
-public interface IpDataRepo extends MongoRepository<IpDataDoc, String> {
+public interface ServiceEmailsRepo extends MongoRepository<ServiceEmailsDoc, String> {
 
 }
