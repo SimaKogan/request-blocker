@@ -53,7 +53,7 @@ public class AnalyzerServiceImpl implements AnalyzerService {
 		return res;
 	}
 	
-	@Value("${app.analyzer.min.value.timestamp: current.TimeMillis-660000}")
+	@Value("${app.analyzer.min.value.timestamp: System.currentTimeMillis()-660000}")
 	int minValueTimestamp;
 	
 	
