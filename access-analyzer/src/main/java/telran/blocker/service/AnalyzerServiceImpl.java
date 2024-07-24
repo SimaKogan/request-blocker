@@ -69,8 +69,8 @@ public class AnalyzerServiceImpl implements AnalyzerService {
 		List<WebServiceTimestamp> value = resFromRedis.getWebServicesTimestamps();
 		value.add(wsTs);
 		if(value.size() < minValueTimestamp) {
-			log.debug("list value is {}, not enough for placing to blocking list", value.size());
-			redisRepo.save(resFromRedis);
+			log.debug("size value is {}, old for placing to blocking list", value.size());
+			redisRepo.deleteById(IP);
 		} else {
 			res = new ArrayList<IpData>();
 			for(WebServiceTimestamp v: value) {
@@ -79,7 +79,7 @@ public class AnalyzerServiceImpl implements AnalyzerService {
 				res.add(ipData);
 			}
 			
-			redisRepo.deleteById(IP);
+			redisRepo.save(resFromRedis);
 		}
 		
 		return res;
