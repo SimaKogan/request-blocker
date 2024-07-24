@@ -3,9 +3,8 @@ package telran.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.MethodArgumentNotValidException;
-import org.springframework.web.ControllerAdvice;
-import org.springframework.web.ExceptionHandler;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,11 +14,11 @@ public class GlobalExceptionHandler {
 	
 	private ResponseEntity<String> errorResponse(String body, HttpStatus status) {
 		log.error(body);
-		return new ReponseEntity<>(body, status);
+		return new ResponseEntity<>(body, status);
 	}
 	
 	@ExceptionHandler({ NotFoundException.class })
-	RasponseEntity<String> notFound(NotFoundException e) {
+	ResponseEntity<String> notFound(NotFoundException e) {
 		String message = e.getMessage();
 		return errorResponse(message, HttpStatus.NOT_FOUND);
 	}
@@ -38,7 +37,7 @@ public class GlobalExceptionHandler {
 	}
 	
 	@ExceptionHandler({ MethodArgumentNotValidException.class })
-	ResponseEntity<String> notValid(org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException e) throws ExceptionHandler {
+	ResponseEntity<String> notValid(org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException e) throws Exception {
 		String message = e.getMessage();
 		return errorResponse(message, HttpStatus.NOT_ACCEPTABLE);
 	}

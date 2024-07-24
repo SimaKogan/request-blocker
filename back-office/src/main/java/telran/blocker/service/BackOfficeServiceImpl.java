@@ -25,7 +25,7 @@ public class BackOfficeServiceImpl implements BackOfficeService {
 	public ServiceEmails addServiceEmails(ServiceEmails serviceEmails) {
 		
 		if (seDocRepo.existsById(serviceEmails.webService())) {
-			throw new AlredyExistsException(WEB_SERVICE_ALREADY_EXIST);
+			throw new AlreadyExistException(WEB_SERVICE_ALREADY_EXIST);
 		}
 		ServiceEmailsDoc res = new ServiceEmailsDoc(serviceEmails);
 		seDocRepo.save(res);
@@ -46,8 +46,8 @@ public class BackOfficeServiceImpl implements BackOfficeService {
 	@Override
 	public IpData addIpData(IpData ipData) {
 		
-		if (ipDataRepo.existsById(ipDataRepo.IP())) {
-			throw new AlreadyExistsException(IP_ALREADY_EXISTS);
+		if (ipDataRepo.existsById(ipData.IP())) {
+			throw new AlreadyExistException(IP_ALREADY_EXIST);
 		}
 		IpDataDoc res = new IpDataDoc(ipData);
 		ipDataRepo.save(res);
@@ -59,7 +59,7 @@ public class BackOfficeServiceImpl implements BackOfficeService {
 	@Override
 	public IpData deleteIpData(String ip) {
 		IpDataDoc res = ipDataRepo.findById(ip).orElseThrow(() -> new NotFoundException(IP_NOT_FOUND));
-		ipDataRepo.deleteIpData(ip);
+		ipDataRepo.deleteById(ip);
 		log.debug("IP {} deleted", res.getIP());
 		return res.buildDto();
 	}

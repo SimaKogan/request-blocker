@@ -37,9 +37,9 @@ class BOServiceTest {
 	private static final IpDataDoc ipDataDoc_2 = new IpDataDoc(ipData_2);
 	
 	private static final String SERVICE_1 = "web_1_service";
-	private static final ServiceEmails SE_1 = newServiceEmails(SERVICE_1,
+	private static final ServiceEmails SE_1 = new ServiceEmails(SERVICE_1,
 	                new String[] { "service1@email.com", "service2@email.com" });
-	private static final ServiceEmails SE_2 = newServiceEmails("web_2_service",
+	private static final ServiceEmails SE_2 = new ServiceEmails("web_2_service",
 	                new String[] { "service1@email.com", "service2@email.com" });
 	private static final ServiceEmailsDoc seDoc_2 = new ServiceEmailsDoc(SE_2);
 	
@@ -111,7 +111,7 @@ class BOServiceTest {
 		T itemActual = foo.get();
 		
 		assertTrue(repo.findAll().isEmpty());
-		assertEquals(item, ItemActual);
+		assertEquals(item, itemActual);
 	}
 	
 	

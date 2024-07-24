@@ -8,7 +8,7 @@ public interface TestDisplayNames {
 	String DELETE_IP_EXCEPT = "delete IP with exception";
 	
 	String ADD_SERVICE_SUCCESS = "add SERVICE normal";
-	String AD_SERVICE_EXCEPT = "add SERVICE with exception";
+	String ADD_SERVICE_EXCEPT = "add SERVICE with exception";
 	String DELETE_SERVICE_SUCCESS = "delete SERVICE normal";
 	String DELETE_SERVICE_EXCEPT = "delete SERVICE with exception";
 }

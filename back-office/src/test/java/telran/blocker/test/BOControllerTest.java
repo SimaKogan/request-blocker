@@ -56,8 +56,7 @@ public class BOControllerTest {
 	
 	private static final String IP_1 = "111.111.111";
 	private static final String IP_NOT_EXIST = "000.000.000";
-	private static final String IpData_1 = new IpData(IP_1, "web_service_111", 0);
-	
+	private static final IpData IpData_1 = new IpData(IP_1, "web_service_111", 0);
 	private static final String SERVICE_1 = "web_EXIST_service";
 	private static final String SERVICE_NOT_EXIST = "web_NOT_EXIST_service";
 	private static final ServiceEmails SE_1 = new ServiceEmails(SERVICE_1,
@@ -68,23 +67,23 @@ public class BOControllerTest {
 	@DisplayName(TestDisplayNames.ADD_IP_SUCCESS)
 	void addIP_Success() throws Exception {
 		
-		OngoingStubbing<IpData> ongoingStubbing = when(BOService.addIpData(ipData_1));
-		addItem_Success(ipData_1, ipUrl, ongoingStubbing);
+		OngoingStubbing<IpData> ongoingStubbing = when(BOService.addIpData(IpData_1));
+		addItem_Success(IpData_1, ipUrl, ongoingStubbing);
 	}
 	
 	@Test
 	@DisplayName(TestDisplayNames.ADD_SERVICE_SUCCESS)
 	void addSE_Success() throws Exception {
 		
-		OngoingStubbing<ServiceEmails> ongoingStubbing = when(BOService.addServiceEmails(SE_1))
+		OngoingStubbing<ServiceEmails> ongoingStubbing = when(BOService.addServiceEmails(SE_1));
 		addItem_Success(SE_1, serviceUrl, ongoingStubbing);
 	}
 	
-	private <T> void addItem_Success(T item, String url, OngoingStubbing<T> ongoingStubbing) throws Exeption {
+	private <T> void addItem_Success(T item, String url, OngoingStubbing<T> ongoingStubbing) throws Exception {
 		ongoingStubbing.thenReturn(item);
-		String itemataJSON = mapper.writeValueAsString(item);
+		String itemDataJSON = mapper.writeValueAsString(item);
 		String response = mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(itemDataJSON))
-				.andDo(print()).andExpect(status().is0k()).andReturn().getResponse().getContentAsString();
+				.andDo(print()).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 	@SuppressWarnings("unchecked")
 	T actual = (T) mapper.readValue(response, (Class<? extends T>) item.getClass());
 	
@@ -98,9 +97,9 @@ public class BOControllerTest {
 	@DisplayName(TestDisplayNames.ADD_IP_EXCEPT)
 	void addIP_Except() throws Exception {
 		
-		OngoingStubbing<IpData> ongoingStubbing = when(BOService.addIpData(ipData_1));
+		OngoingStubbing<IpData> ongoingStubbing = when(BOService.addIpData(IpData_1));
 		String errorMessage = IP_ALREADY_EXIST;
-		addItem_Except(ipData_1, ipUrl, ongoingStubbing, errorMessage);
+		addItem_Except(IpData_1, ipUrl, ongoingStubbing, errorMessage);
 	}
 	
 	@Test
@@ -112,13 +111,13 @@ public class BOControllerTest {
 		addItem_Except(SE_1, serviceUrl, ongoingStubbing, errorMessage);
 	}
 	
-	private <T> void  addItem_Exception(T item, String url, OngoingStubbing<T> ongoingStubbing, String errorMessage)
+	private <T> void  addItem_Except(T item, String url, OngoingStubbing<T> ongoingStubbing, String errorMessage)
 	                   throws Exception {
 		RuntimeException exception = new AlreadyExistException(errorMessage);
 		ongoingStubbing.thenThrow(exception);
 		String itemDataJSON = mapper.writeValueAsString(item);
 		String response = mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(itemDataJSON))
-				.andDO(print()).addExpect(status().is4xxClientError()).andReturn().getResponse().getContentAsString();
+				.andDo(print()).andExpect(status().is4xxClientError()).andReturn().getResponse().getContentAsString();
 		assertEquals(errorMessage, response);
 	}
 	
@@ -129,8 +128,8 @@ public class BOControllerTest {
 	@DisplayName(TestDisplayNames.DELETE_IP_SUCCESS)
 	void deleteIP_Success() throws Exception {
 		String fullUrl = ipUrl + "/" + IP_1;
-		OngoingStubbing<IpData> ongoingStubbing = when(BOService.BOService.deleteIpData(IP_1));
-		deleteItem_Success(ipData_1, fullUrl, ongoingStubbing);
+		OngoingStubbing<IpData> ongoingStubbing = when(BOService.deleteIpData(IP_1));
+		deleteItem_Success(IpData_1, fullUrl, ongoingStubbing);
 	}
 	
 	@Test
@@ -143,7 +142,7 @@ public class BOControllerTest {
 	
 	private <T> void deleteItem_Success(T item, String url, OngoingStubbing<T> ongoingStubbing) throws Exception {
 		ongoingStubbing.thenReturn(item);
-		String response = mockMvc.perform(delete(url)).andDo(print()).andExpect(status(.is0k()).andReturn()
+		String response = mockMvc.perform(delete(url)).andDo(print()).andExpect(status().isOk()).andReturn()
 				.getResponse().getContentAsString();
 		@SuppressWarnings("unchecked")
 		T actual = (T) mapper.readValue(response, (Class<? extends T>) item.getClass());

@@ -1,5 +1,6 @@
 package telran.blocker.service;
 
+import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +45,38 @@ public class AnalyzerServiceImpl implements AnalyzerService {
 			for(WebServiceTimestamp l: list) {
 				ipData = new IpData(IP, l.webService(), l.timestamp());
 				log.debug("IP: {} webService{} timestamp{} ready for placing to blocking list", IP, l.webService(), l.timestamp());
+				res.add(ipData);
+			}
+			
+			redisRepo.deleteById(IP);
+		}
+		
+		return res;
+	}
+	
+	@Value("${app.analyzer.min.value.timestamp: current.TimeMillis-660000}")
+	int minValueTimestamp;
+	
+	
+	public List<IpData> getValue(IpData ipData) {
+		List<IpData> res = null;
+		String IP = ipData.IP();
+		WebServiceTimestamp wsTs = new WebServiceTimestamp(ipData.webService(), ipData.timestamp());
+		log.debug("received IP: {} webService{} timestamp{} to Redis", IP, ipData.webService(), ipData.timestamp());
+		RedisModel resFromRedis = redisRepo.findById(IP).orElse(null);
+		if(resFromRedis == null) {
+			resFromRedis = new RedisModel(ipData.IP());
+		}
+		List<WebServiceTimestamp> value = resFromRedis.getWebServicesTimestamps();
+		value.add(wsTs);
+		if(value.size() < minValueTimestamp) {
+			log.debug("list value is {}, not enough for placing to blocking list", value.size());
+			redisRepo.save(resFromRedis);
+		} else {
+			res = new ArrayList<IpData>();
+			for(WebServiceTimestamp v: value) {
+				ipData = new IpData(IP, v.webService(), v.timestamp());
+				log.debug("IP: {} webService{} timestamp{} ready for placing to blocking list", IP, v.webService(), v.timestamp());
 				res.add(ipData);
 			}
 			
