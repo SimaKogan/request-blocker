@@ -93,5 +93,7 @@
 	<module>access-analyzer</module>
 	<module>redis-explorer</module>
 	<module>back-office</module>
+	<module>blocking-provider</module>
+	<module>notification-provider</module>
 	</modules>
 </project>
