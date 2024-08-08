@@ -23,6 +23,9 @@ public class AnalyzerServiceImpl implements AnalyzerService {
 	@Value("${app.analyzer.max.list.size: 5}")
 	int maxListSize;
 	
+	@Value("${app.analyzer.border.time}")
+	long borderTime;
+	
 	
 	@Override
 	public List<IpData> getList(IpData ipData) {
@@ -36,12 +39,13 @@ public class AnalyzerServiceImpl implements AnalyzerService {
 		}
 		List<WebServiceTimestamp> list = resFromRedis.getWebServicesTimestamps();
 		list.add(wsTs);
-		if(list.size() < maxListSize) {
-			log.debug("list size is {}, not enough for placing to blocking list", list.size());
-			redisRepo.save(resFromRedis);
+		List<WebServiceTimestamp> fltList = filterByTimestamp(list);
+		if(fltList.size() < maxListSize) {
+			log.debug("list size is {}, not enough for placing to blocking list", fltList.size());
+			redisRepo.save(new RedisModel(IP, fltList));
 		} else {
 			res = new ArrayList<IpData>();
-			for(WebServiceTimestamp l: list) {
+			for(WebServiceTimestamp l: fltList) {
 				ipData = new IpData(IP, l.webService(), l.timestamp());
 				log.debug("IP: {} webService{} timestamp{} ready for placing to blocking list", IP, l.webService(), l.timestamp());
 				res.add(ipData);
@@ -53,36 +57,15 @@ public class AnalyzerServiceImpl implements AnalyzerService {
 		return res;
 	}
 	
-	@Value("${app.analyzer.min.value.timestamp: System.currentTimeMillis()-660000}")
-	int minValueTimestamp;
 	
-	
-	public List<IpData> getValue(IpData ipData) {
-		List<IpData> res = null;
-		String IP = ipData.IP();
-		WebServiceTimestamp wsTs = new WebServiceTimestamp(ipData.webService(), ipData.timestamp());
-		log.debug("received IP: {} webService{} timestamp{} to Redis", IP, ipData.webService(), ipData.timestamp());
-		RedisModel resFromRedis = redisRepo.findById(IP).orElse(null);
-		if(resFromRedis == null) {
-			resFromRedis = new RedisModel(ipData.IP());
-		}
-		List<WebServiceTimestamp> value = resFromRedis.getWebServicesTimestamps();
-		value.add(wsTs);
-		if(value.size() < minValueTimestamp) {
-			log.debug("size value is {}, old for placing to blocking list", value.size());
-			redisRepo.deleteById(IP);
-		} else {
-			res = new ArrayList<IpData>();
-			for(WebServiceTimestamp v: value) {
-				ipData = new IpData(IP, v.webService(), v.timestamp());
-				log.debug("IP: {} webService{} timestamp{} ready for placing to blocking list", IP, v.webService(), v.timestamp());
-				res.add(ipData);
-			}
-			
-			redisRepo.save(resFromRedis);
-		}
+	private List<WebServiceTimestamp> filterByTimestamp(List<WebServiceTimestamp> list) {
+		long currentTime = System.currentTimeMillis();
 		
-		return res;
+		List<WebServiceTimestamp> fltList = list.stream().filter(wt -> (currentTime - wt.timestamp()) < borderTime).toList();
+		
+		fltList.forEach(l -> System.out.printf("flt_name: %s\n", l.webService()));
+
+		return fltList;
 	}
 
 }
