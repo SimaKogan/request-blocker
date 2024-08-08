@@ -43,7 +43,7 @@ public class BackOfficeController {
 		return res;
 	}
 	
-	@DeleteMapping("${app.back.office.ip.url" + "/{ip}")
+	@DeleteMapping("${app.back.office.ip.url}" + "/{ip}")
 	IpData deleteIpData(@PathVariable(name = "ip") String ip) {
 		log.debug("IP {} received for deletion", ip);
 		IpData res = backService.deleteIpData(ip);
