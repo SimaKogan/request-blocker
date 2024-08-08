@@ -1,7 +1,6 @@
 package telran.blocker.test;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.function.Supplier;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.repository.MongoRepository;
-
 import telran.blocker.dto.IpData;
 import telran.blocker.dto.ServiceEmails;
 import telran.blocker.model.IpDataDoc;
@@ -30,19 +28,24 @@ class BOServiceTest {
 	IpDataRepo ipRepo;
 	@Autowired
 	ServiceEmailsRepo seRepo;
-	
-	private static final String IP_1 = "111";
+
+	private static final String IP_1 = "111.111.111";
 	private static final IpData ipData_1 = new IpData(IP_1, "web_service_111", 0);
 	private static final IpData ipData_2 = new IpData("112.112.112", "web_service_112", 0);
 	private static final IpDataDoc ipDataDoc_2 = new IpDataDoc(ipData_2);
 	
+	private static final IpData ipData_ipNULL = new IpData(null, "webservice", 0); //IllegalArgumentException
+	
+	private static final IpData ipData_ipLength3 = new IpData("999", "webservice", 0); //MethodArgumentNotValidException
+	private static final IpData ipData_missingWS = new IpData("9999", null, 0); //MethodArgumentNotValidException
+
 	private static final String SERVICE_1 = "web_1_service";
 	private static final ServiceEmails SE_1 = new ServiceEmails(SERVICE_1,
-	                new String[] { "service1@email.com", "service2@email.com" });
+			new String[] { "service1@email.com", "service2@email.com" });
 	private static final ServiceEmails SE_2 = new ServiceEmails("web_2_service",
-	                new String[] { "service1@email.com", "service2@email.com" });
+			new String[] { "service1@email.com", "service2@email.com" });
 	private static final ServiceEmailsDoc seDoc_2 = new ServiceEmailsDoc(SE_2);
-	
+
 	@BeforeEach
 	void setup() {
 		ipRepo.deleteAll();
@@ -51,6 +54,33 @@ class BOServiceTest {
 		seRepo.save(seDoc_2);
 	}
 	
+	@Test
+	@DisplayName(TestDisplayNames.IP_ILLEGAL_ARGUMENT)
+	void iP_illegal_argument() throws Exception {
+		IpData item = ipData_ipNULL;
+		
+		assertThrows(IllegalArgumentException.class, () -> BOService.addIpData(item));
+	}
+	
+	@Test
+	@DisplayName(TestDisplayNames.IP_ARGUMENT_NOT_VALID_LENGTH)
+	void iP_not_valid_length() throws Exception {
+		IpData item = ipData_ipLength3;
+
+		assertDoesNotThrow(() -> BOService.addIpData(item));
+	}
+	
+	
+	@Test
+	@DisplayName(TestDisplayNames.IP_ARGUMENT_NOT_VALID_MISSING)
+	void iP_missing_WS() throws Exception {
+		IpData item = ipData_missingWS;
+		
+		assertDoesNotThrow(() -> BOService.addIpData(item));
+	}
+	
+	
+
 	@Test
 	@DisplayName(TestDisplayNames.ADD_IP_SUCCESS)
 	void addIP_Success() {
@@ -63,35 +93,35 @@ class BOServiceTest {
 		Supplier<ServiceEmails> foo = () -> BOService.addServiceEmails(SE_1);
 		addItem_Success(foo, SE_1, seRepo);
 	}
-	
+
 	private <T, R> void addItem_Success(Supplier<T> foo, T item, MongoRepository<R, String> repo) {
 		T itemActual = foo.get();
-		
+
 		assertEquals(item, itemActual);
 		assertEquals(2, repo.count());
 	}
 	
-	
+
 	@Test
 	@DisplayName(TestDisplayNames.ADD_IP_EXCEPT)
 	void addIP_Except() {
 		Runnable foo = () -> BOService.addIpData(ipData_2);
 		addItem_Except(foo);
-	}
+	}	
 	@Test
 	@DisplayName(TestDisplayNames.ADD_SERVICE_EXCEPT)
 	void addSE_Except() {
 		Runnable foo = () -> BOService.addServiceEmails(SE_2);
 		addItem_Except(foo);
 	}
-	
+
 	private void addItem_Except(Runnable foo) {
-		
+
 		assertThrows(AlreadyExistException.class, foo::run);
-		
+
 	}
 	
-	
+
 	@Test
 	@DisplayName(TestDisplayNames.DELETE_IP_SUCCESS)
 	void deleteIP_Success() {
@@ -106,15 +136,15 @@ class BOServiceTest {
 		Supplier<ServiceEmails> foo = () -> BOService.deleteServiceEmails(name);
 		deleteItem_Success(foo, SE_2, seRepo);
 	}
-	
+
 	private <T, R> void deleteItem_Success(Supplier<T> foo, T item, MongoRepository<R, String> repo) {
-		T itemActual = foo.get();
-		
+		T ItemActual = foo.get();
+
 		assertTrue(repo.findAll().isEmpty());
-		assertEquals(item, itemActual);
+		assertEquals(item, ItemActual);
 	}
 	
-	
+
 	@Test
 	@DisplayName(TestDisplayNames.DELETE_IP_EXCEPT)
 	void deleteIP_Except() {
@@ -129,10 +159,46 @@ class BOServiceTest {
 		Runnable foo = () -> BOService.deleteServiceEmails(name);
 		deleteItem_Except(foo);
 	}
-	
+
 	private void deleteItem_Except(Runnable foo) {
-		
+
 		assertThrows(NotFoundException.class, foo::run);
-		
 	}
+	
+	@Test
+	@DisplayName(TestDisplayNames.ADD_SERVICE_EMAILS_SUCCESS)
+	void addSE_Emails_Except2() {
+		
+		assertThrows(AlreadyExistException.class, () -> BOService.addIpData(ipData_2));
+	}
+	
+	@Test
+	@DisplayName(TestDisplayNames.ADD_SERVICE_EMAILS_EXCEPTION)
+	void addSE_Emails_Exception_Except2() {
+		
+		assertThrows(AlreadyExistException.class, () -> BOService.addIpData(ipData_2));
+	}	
+		
+	@Test
+	@DisplayName(TestDisplayNames.SERVICE_EMAILS_VALIDATION_ERROR)
+	void addSE_Emails_Validation_Error_Except2() {
+		
+		assertThrows(AlreadyExistException.class, () -> BOService.addIpData(ipData_2));
+	}
+	
+	@Test
+	@DisplayName(TestDisplayNames.DELETE_SERVICE_EMAILS_SUCCESS)
+	void deleteSE_Emails_Success_Except2() {
+		
+		assertThrows(AlreadyExistException.class, () -> BOService.addIpData(ipData_2));
+	}
+	
+	@Test
+	@DisplayName(TestDisplayNames.DELETE_SERVICE_EMAILS_EXCEPTION)
+	void deleteSE_Emails_Exception_Except2() {
+		
+		assertThrows(AlreadyExistException.class, () -> BOService.addIpData(ipData_2));
+	}
+
+	
 }
